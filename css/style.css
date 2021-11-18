@@ -1,0 +1,64 @@
+/* commons */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* body */
+body {
+    position: relative;
+    height: 100vh;
+    background: rgb(4,22,50);
+}
+.container {
+    border: .1px solid rgba(255,255,255,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* game */
+#grid {
+    display: flex;
+    flex-direction: column;
+}
+.row {
+    display: flex;
+    border-top: .1px solid rgba(255,255,255,0.1);
+}
+.col {
+    border-left: .1px solid rgba(255,255,255,0.1);
+}
+.row:first-child,
+.col:first-child {
+    border: none;
+}
+/* squares */
+.square {
+    width: 25px;
+    height: 25px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 900;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.number {
+    background: rgb(15,217,119);
+}
+.hidden {
+    opacity: 0;
+}
+.bomb {
+    background: rgb(1,46,137);
+}
+.x, .y {
+    display: none;
+}
