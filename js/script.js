@@ -10,7 +10,7 @@ function createGrid(num) {
             colHTML.className = "col col-" + col; // classe dinamica colonne
             const squareHTML = document.createElement("div"); // creazione div quadrato 
             squareHTML.className = "square hidden " + squareClass(row, col); // classe dinamica quadrati
-            squareHTML.innerHTML = `<span class="x">${row}</span><span class="y">${col}</span>`;
+            // squareHTML.innerHTML = `<span class="x">${row}</span><span class="y">${col}</span>`;
             colHTML.append(squareHTML); // inserimento quadrato in colonna
             rowHTML.append(colHTML); // inserimento colonna in riga
         }
@@ -34,8 +34,7 @@ function addBombs(num) {
     for (let i = 0; i < num; i++) {
         let j = randomArray[i];
         squares[j].classList.add("bomb");
-        squares[j].innerHTML += `${bombHTML}`;
-        // squares[randomArray[i]].classList.remove("hidden"); // debug****************************
+        squares[j].innerHTML += '<span><i class="fas fa-bomb"></i></span>';
     }
 }
 
@@ -45,78 +44,67 @@ function addClick (num) {
         for (col = 1; col <= num; col++) {
             square(row, col).addEventListener("click", function() { // richiamo della funzione per selezionare il quadrato e aggiunta del click
                 this.classList.remove("hidden");
-                bombCheck(this);
+                squareCheck(this);
             });
         }
     }
 }
 
 // controllo quadrati
-function bombCheck(div) {
-    let a = parseInt(div.querySelector(".x").innerHTML);
-    let b = parseInt(div.querySelector(".y").innerHTML);
-    if (div.classList.contains("zero")) {
-        console.log(div);
-        showAround(a, b)
-
-        function showAround(a, b) {
-            square(a, b).classList.add("check");
-            let r = a - 1;
-            for (let i = 0; i < 3; i++) {
-                let c = b - 1;
-                for (let j = 0; j < 3; j++) {
-                    // console.log(a + " " + b);
-                    if (square(r, c) != null) {
-                    // console.log(a + " " + b);
-                        if (square(r, c).innerHTML != `<span class="x">${r}</span><span class="y">${c}</span>${bombHTML}`) {
-                            // square(r, c).classList.add("clicked");2
-
-                            square(r, c).classList.remove("hidden");
-                            // showAround(r, c);
-                            // if (square(r,c).innerHTML != `<span class="x">${r}</span><span class="y">${c}</span>`) {
-                            //     showAround(r, c);
-                            // }
-                            if (square(r, c).classList.contains("zero") && !square(r, c).classList.contains("check")) {
-                                let uno = r;
-                                let due = c;
-                                showAround(uno, due);
-                            }
-                        }
-                    }
-                    c++;
-                }
-                r++
-            }
-        }
+function squareCheck(thisSquare) {
+    const stringClass = thisSquare.classList[1];
+    let a = parseInt(stringClass[6] + stringClass[7]);
+    let b = parseInt(stringClass[9] + stringClass[10]);
+    if (square(a, b).classList.contains("zero")) {
+        showAround(a, b);
     }
-    if (div.innerHTML == `<span class="x">${a}</span><span class="y">${b}</span>${bombHTML}`) {
-        div.style.background = "red";
+    if (thisSquare.classList.contains("bomb")) {
+        thisSquare.style.background = "red";
         allBombs = document.getElementsByClassName("bomb");
         for (let i = 0; i < allBombs.length; i++) {
-            // allBombs[i].classList.add("clicked");
             allBombs[i].classList.remove("hidden");
         }
     }
 }
 
+// funzione ricorsiva che rivela tutti i quadrati vuoti intorno
+function showAround(a, b) {
+    square(a, b).classList.add("check");
+    let r = a - 1;
+    for (let i = 0; i < 3; i++) {
+        let c = b - 1;
+        for (let j = 0; j < 3; j++) {
+            if (square(r, c) != null) {
+                if (!(square(r, c).classList.contains("bomb"))) {
+                    square(r, c).classList.remove("hidden");
+                    if (square(r, c).classList.contains("zero") && !square(r, c).classList.contains("check")) {
+                        showAround(r, c);
+                    }
+                }
+            }
+            c++;
+        }
+        r++
+    }
+}
+
+// funzione per scrivere i numeri nella griglia
 function popolateGrid() {
     let squareArray = document.getElementsByClassName("square");
-    // console.log(squareArray);
     for (let count = 0; count < squareArray.length; count++) {
         let div = squareArray[count];
-        let r = parseInt(div.querySelector(".x").innerHTML);
-        let c = parseInt(div.querySelector(".y").innerHTML);
+        const stringClass = div.classList[2];
+        let r = parseInt(stringClass[6] + stringClass[7]);
+        let c = parseInt(stringClass[9] + stringClass[10]);
         let bombsNum = 0;
         let a = r - 1;
         for (let i = 0; i < 3; i++) {
             let b = c - 1;
             for (let j = 0; j < 3; j++) {
-                // console.log(a + " " + b);
                 if (square(a, b) != null) {
-                // console.log(a + " " + b);
-                    if (square(a, b).innerHTML == `<span class="x">${a}</span><span class="y">${b}</span>${bombHTML}`) {
+                    if (square(a, b).classList.contains("bomb")) {
                         bombsNum ++;
-                        if (square(r, c).innerHTML != `<span class="x">${r}</span><span class="y">${c}</span>${bombHTML}`) {
+                        if (!(square(r, c).classList.contains("bomb"))) {
                             square(r, c).innerHTML = bombsNum;
                         }
                     }
@@ -125,32 +113,29 @@ function popolateGrid() {
             }
             a++
         }
-        if (square(r, c).innerHTML != `<span class="x">${r}</span><span class="y">${c}</span>${bombHTML}`) {
+        if (!(square(r, c).classList.contains("bomb"))) {
             switch (bombsNum) {
                 case 0:
-                    square(r, c).style.background = "lightgrey";
+                    square(r, c).style.background = "rgb(4,22,50)";
                     square(r, c).classList.add("zero");
-                    // square(r, c).innerHTML = "";
                     break;
                 case 1:
                     square(r, c).style.color = "blue";
-                    square(r, c).style.background = "rgb(15,217,119)";
                     break;
                 case 2:
                     square(r, c).style.color = "green";
-                    square(r, c).style.background = "rgb(15,217,119)";
                     break;
                 case 3:
                     square(r, c).style.color = "red";
-                    square(r, c).style.background = "rgb(15,217,119)";
                     break;
                 case 4:
                     square(r, c).style.color = "violet";
-                    square(r, c).style.background = "rgb(15,217,119)";
                     break;
                 case 5:
                     square(r, c).style.color = "purple";
-                    square(r, c).style.background = "rgb(15,217,119)";
+            }
+            if (bombsNum != 0) {
+                square(r, c).classList.add("number");
             }
         }
     }
@@ -178,9 +163,12 @@ switch (level) { // dimensioni griglia dinamica con difficoltà
 bombs = Math.floor((gridDim * gridDim) / 5);
 let row; // contatore delle righe da utilizzare nelle classi dinamiche
 let col; // contatore delle colonne da utilizzare nelle classi dinamiche
-const squareClass = (a, b) => "square" + a + "_" + b; // funzione per creare una classe dinamica da utilizzare per i quadrati
+const squareClass = (a, b) => { // funzione per creare una classe dinamica da utilizzare per i quadrati
+    a = ("0" + a).slice(-2);
+    b = ("0" + b).slice(-2);
+    return "square" + a + "_" + b;
+}
 const square = (a, b) => document.querySelector("." + squareClass(a, b)); // funzione per selezionare un quadrato con classe dinamica
-const bombHTML = `<span><i class="fas fa-bomb"></i></span>`;
 createGrid(gridDim); // funzione che crea la griglia di gioco
 addBombs(bombs); // funzione per aggiungere le bombe
 popolateGrid(); // funzione per popolare la griglia

@@ -18,6 +18,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background: grey;
 }
 
 /* game */
@@ -27,10 +28,10 @@ body {
 }
 .row {
     display: flex;
-    border-top: .1px solid rgba(255,255,255,0.1);
+    border-top: .5px solid rgba(0,0,0,0.3);
 }
 .col {
-    border-left: .1px solid rgba(255,255,255,0.1);
+    border-left: .5px solid rgba(0,0,0,0.3);
 }
 .row:first-child,
 .col:first-child {
