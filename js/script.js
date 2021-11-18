@@ -1,11 +1,11 @@
 // +++ funzioni +++
 
 // creazione griglia
-function createGrid(num) {
-    for (row = 1; row <= num; row++) { // ciclo per le righe
+function createGrid() {
+    for (row = 1; row <= gridRows; row++) { // ciclo per le righe
         const rowHTML = document.createElement("div"); // creazione div riga
         rowHTML.className = "row row-" + row; // classe dinamica righe
-        for (col = 1; col <= num; col++) { // ciclo per le colonne
+        for (col = 1; col <= gridCols; col++) { // ciclo per le colonne
             const colHTML = document.createElement("div"); // creazione div colonna
             colHTML.className = "col col-" + col; // classe dinamica colonne
             const squareHTML = document.createElement("div"); // creazione div quadrato 
@@ -23,7 +23,7 @@ function addBombs(num) {
     // ciclo per numeri random univoci
     let randomArray = [];
     while (randomArray.length < num) { // sviluppo numeri random fino al numero di bombe
-        const totalSquares = gridDim * gridDim; // numero di quadrati in totale
+        const totalSquares = gridRows * gridCols; // numero di quadrati in totale
         let randomNum = Math.floor(Math.random() * totalSquares); // numero casuale
         if (randomArray.indexOf(randomNum) == -1) { // se il numero casuale non è presente nell'array
             randomArray.push(randomNum) // inserimento numero casuale nell'array
@@ -39,9 +39,9 @@ function addBombs(num) {
 }
 
 // aggiunta click ai quadrati
-function addClick (num) {
-    for (row = 1; row <= num; row++) {
-        for (col = 1; col <= num; col++) {
+function addClick () {
+    for (row = 1; row <= gridRows; row++) {
+        for (col = 1; col <= gridCols; col++) {
             square(row, col).addEventListener("click", function() { // richiamo della funzione per selezionare il quadrato e aggiunta del click
                 this.classList.remove("hidden");
                 squareCheck(this);
@@ -147,29 +147,48 @@ function popolateGrid() {
 // +++ codice +++
 
 // variabli
-let gridDim = 0;
-let bombs = 0;
-let level = parseInt(prompt("Livello: 0, 1 o 2")); // prova inserimento difficoltà
-switch (level) { // dimensioni griglia dinamica con difficoltà
-    case 0:
-        gridDim = 30;
-        break;
-    case 1:
-        gridDim = 20;
-        break;
-    case 2:
-        gridDim = 10;
-}
-bombs = Math.floor((gridDim * gridDim) / 5);
-let row; // contatore delle righe da utilizzare nelle classi dinamiche
-let col; // contatore delle colonne da utilizzare nelle classi dinamiche
+let bombs, row, col, gridRows, gridCols;
 const squareClass = (a, b) => { // funzione per creare una classe dinamica da utilizzare per i quadrati
     a = ("0" + a).slice(-2);
     b = ("0" + b).slice(-2);
     return "square" + a + "_" + b;
 }
 const square = (a, b) => document.querySelector("." + squareClass(a, b)); // funzione per selezionare un quadrato con classe dinamica
-createGrid(gridDim); // funzione che crea la griglia di gioco
-addBombs(bombs); // funzione per aggiungere le bombe
-popolateGrid(); // funzione per popolare la griglia
-addClick(gridDim); // funzione che aggiunge il click ai quadrati
+let smallGrid = document.getElementById("small");
+smallGrid.addEventListener("click", function() {
+    document.getElementById("grid").innerHTML = "";
+    gridRows = 10;
+    gridCols = 10;
+    bombs = Math.floor((gridRows * gridCols) / 5);
+    createGame();
+})
+let mediumGrid = document.getElementById("medium");
+mediumGrid.addEventListener("click", function() {
+    document.getElementById("grid").innerHTML = "";
+    gridRows = 20;
+    gridCols = 20;
+    bombs = Math.floor((gridRows * gridCols) / 5);
+    createGame();
+})
+let largeGrid = document.getElementById("large");
+largeGrid.addEventListener("click", function() {
+    document.getElementById("grid").innerHTML = "";
+    gridRows = 30;
+    gridCols = 30;
+    bombs = Math.floor((gridRows * gridCols) / 5);
+    createGame();
+})
+let customGrid = document.getElementById("custom");
+customGrid.addEventListener("click", function() {
+    document.getElementById("grid").innerHTML = "";
+    gridRows = document.getElementById("rows").value;
+    gridCols = document.getElementById("cols").value;
+    bombs = document.getElementById("bombs").value;
+    createGame();
+})
+function createGame() {
+    createGrid(); // funzione che crea la griglia di gioco
+    addBombs(bombs); // funzione per aggiungere le bombe
+    popolateGrid(); // funzione per popolare la griglia
+    addClick(); // funzione che aggiunge il click ai quadrati
+}

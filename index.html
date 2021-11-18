@@ -15,15 +15,32 @@
         <!-- logo -->
         <!-- ++++++++++++ -->
         <!-- /logo -->
-        <!-- pulsanti -->
-        <div class="buttons">
-
-        </div>
     </header>
 
     <!-- main -->
-    <main id="grid" class="container">
-
+    <main>
+        <!-- opzioni -->
+        <div class="side-bar left">
+            <!-- pulsanti -->
+            <div class="options">
+                <button id="small">Campo da gioco piccolo</button>
+                <button id="medium">Campo da gioco medio</button>
+                <button id="large">Campo da gioco grande</button>
+                <label for="rows">Personalizzato</label>
+                <input id="rows" type="number" placeholder="Righe">
+                <input id="cols" type="number" placeholder="Colonne">
+                <input id="bombs" type="number" placeholder="Bombe">
+                <button id="custom">Campo da gioco personalizzato</button>
+            </div>
+        </div>
+        <!-- griglia -->
+        <div class="grid-container">
+            <div id="grid">
+    
+            </div>
+        </div>
+        <!-- informazioni -->
+        <div class="side-bar right"></div>
     </main>
 
     <script src="js/script.js"></script>
