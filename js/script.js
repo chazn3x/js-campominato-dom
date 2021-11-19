@@ -38,87 +38,106 @@ function addBombs() {
     }
 }
 
-// aggiunta click ai quadrati
+// aggiunta click a tutto
 function addClick () {
-    let clickFunction = function() {
-        if (!(this.classList.contains("flagged"))) {
-            this.classList.remove("hidden");
-            this.classList.add("checked");
+    addClickOnSquare(); // aggiunta click ai quadrati
+    flagBtn.addEventListener("click", flagBtnClick); // aggiunta click al toggle delle bandiere
+
+}
+// funzione dichiarata come variabile per attivare o disattivare il toggle delle bandierine
+const flagBtnClick = function() {
+    if (flagBool == false) {
+        removeClickOnSquare();
+        flagBool = true;
+        flagBtn.classList.add("clicked");
+        document.getElementById("grid").classList.add("flag-cursor");
+        for (row = 1; row <= gridRows; row++) {
+            for (col = 1; col <= gridCols; col++) {
+                if (!(square(row, col).classList.contains("checked"))) {
+                    square(row, col).addEventListener("click", createFlags);
+                }
+            }
+        }
+    } else {
+        flagBool = false;
+        flagBtn.classList.remove("clicked");
+        document.getElementById("grid").classList.remove("flag-cursor");
+        for (row = 1; row <= gridRows; row++) {
+            for (col = 1; col <= gridCols; col++) {
+                square(row, col).removeEventListener("click", createFlags);
+            }
+        }
+        addClickOnSquare();
+    }
+}
+
+// aggiunta click ai quadrati
+function addClickOnSquare() {
+    for (row = 1; row <= gridRows; row++) {
+        for (col = 1; col <= gridCols; col++) {
+            square(row, col).addEventListener("click", clickOnSquare);
+        }
+    }
+}
+
+// rimozione click ai quadrati
+function removeClickOnSquare() {
+    for (row = 1; row <= gridRows; row++) {
+        for (col = 1; col <= gridCols; col++) {
+            square(row, col).removeEventListener("click", clickOnSquare);
+        }
+    }
+}
+
+// funzione dichiarata come variabile per aggiungere il click ai quadrati
+const clickOnSquare = function() {
+    if (!(this.classList.contains("flagged"))) {
+        this.classList.remove("hidden");
+        this.classList.add("checked");
+        checked++;
+        if (checked == (gridRows * gridCols) - bombs) {
+            allBombs = document.getElementsByClassName("bomb");
+            for (let i = 0; i < allBombs.length; i++) {
+                allBombs[i].classList.remove("hidden");
+                if (allBombs[i].classList.contains("flagged")) {
+                    allBombs[i].querySelector(".flag").remove();
+                }
+            }
+            document.querySelector(".result").innerHTML = "Hai vinto!";
+            document.querySelector(".overlay").classList.add("active");
+        } else {
             squareCheck(this);
         }
     }
-    let flagFunction = function() {
-        if (!(this.classList.contains("flagged")) && flags > 0) {
-            this.classList.add("flagged");
-            const stringClass = this.classList[2];
-            let a = parseInt(stringClass[6] + stringClass[7]);
-            let b = parseInt(stringClass[9] + stringClass[10]);
-            const flagHTML = document.createElement("div");
-            flagHTML.classList.add("flag", "flag" + a + "_" + b);
-            flagHTML.innerHTML = '<img src="/img/red-flag-16.png" alt="flag icon">';
-            this.append(flagHTML);
-            flags--;
-        } else {
-            this.classList.remove("flagged");
-            this.querySelector(".flag").remove();
-            flags++;
-        }
-        document.querySelector(".flags-num").innerHTML = flags;
+}
+
+// funzione dichiarata come variabile per creare le bandierine
+const createFlags = function() {
+    if (!(this.classList.contains("flagged")) && flags > 0) {
+        this.classList.add("flagged");
+        const stringClass = this.classList[2];
+        let a = parseInt(stringClass[6] + stringClass[7]);
+        let b = parseInt(stringClass[9] + stringClass[10]);
+        const flagHTML = document.createElement("div");
+        flagHTML.classList.add("flag", "flag" + a + "_" + b);
+        flagHTML.innerHTML = '<img src="/img/red-flag-16.png" alt="flag icon">';
+        this.append(flagHTML);
+        flags--;
+    } else {
+        this.classList.remove("flagged");
+        this.querySelector(".flag").remove();
+        flags++;
     }
-    let flagBool = false;
-    doClick();
-    const flagBtn = document.getElementById("flag");
-    flagBtn.addEventListener("click", function() {
-        if (flagBool == false) {
-            doNotClick();
-            flagBool = true;
-            flagBtn.classList.add("clicked");
-            document.getElementById("grid").classList.add("flag-cursor");
-            for (row = 1; row <= gridRows; row++) {
-                for (col = 1; col <= gridCols; col++) {
-                    if (!(square(row, col).classList.contains("checked"))) {
-                        square(row, col).addEventListener("click", flagFunction);
-                    }
-                }
-            }
-        } else {
-            flagBool = false;
-            flagBtn.classList.remove("clicked");
-            document.getElementById("grid").classList.remove("flag-cursor");
-            for (row = 1; row <= gridRows; row++) {
-                for (col = 1; col <= gridCols; col++) {
-                    square(row, col).removeEventListener("click", flagFunction);
-                }
-            }
-            doClick();
-        }
-    });
-    function doNotClick() {
-        for (row = 1; row <= gridRows; row++) {
-            for (col = 1; col <= gridCols; col++) {
-                square(row, col).removeEventListener("click", clickFunction);
-            }
-        }
-    }
-    function doClick() {
-        for (row = 1; row <= gridRows; row++) {
-            for (col = 1; col <= gridCols; col++) {
-                square(row, col).addEventListener("click", clickFunction);
-            }
-        }
-    }
+    document.querySelector(".flags-num").innerHTML = flags;
 }
 
 // controllo quadrati
 function squareCheck(thisSquare) {
     const stringClass = thisSquare.classList[1];
-    console.log(stringClass);
     let a = parseInt(stringClass[6] + stringClass[7]);
     let b = parseInt(stringClass[9] + stringClass[10]);
-    if (square(a, b).classList.contains("zero")) {
-        showAround(a, b);
-    }
     if (thisSquare.classList.contains("bomb")) {
+        document.querySelector(".result").innerHTML = "Hai perso!";
         thisSquare.querySelector(".inner-square").style.background = "red";
         thisSquare.querySelector(".inner-square").style.color = "black";
         allBombs = document.getElementsByClassName("bomb");
@@ -129,6 +148,12 @@ function squareCheck(thisSquare) {
             }
         }
         document.querySelector(".overlay").classList.add("active");
+    } 
+    if (thisSquare.classList.contains("zero")) {
+        showAround(a, b);
+    } else {
+        let bombCounter = 0;
+        showAroundOthers(a, b, bombCounter);
     }
 }
 
@@ -142,15 +167,67 @@ function showAround(a, b) {
             if (square(r, c) != null) {
                 if (!(square(r, c).classList.contains("bomb")) && !(square(r, c).classList.contains("flagged"))) {
                     square(r, c).classList.remove("hidden");
+                    if (!(square(r, c).classList.contains("checked"))) {
+                        checked++;
+                    }
                     square(r, c).classList.add("checked");
                     if (square(r, c).classList.contains("zero") && !square(r, c).classList.contains("check")) {
                         showAround(r, c);
+                    }
+                    if (checked == (gridRows * gridCols) - bombs) {
+                        allBombs = document.getElementsByClassName("bomb");
+                        for (let i = 0; i < allBombs.length; i++) {
+                            allBombs[i].classList.remove("hidden");
+                            if (allBombs[i].classList.contains("flagged")) {
+                                allBombs[i].querySelector(".flag").remove();
+                            }
+                        }
+                        document.querySelector(".result").innerHTML = "Hai vinto!";
+                        document.querySelector(".overlay").classList.add("active");
                     }
                 }
             }
             c++;
         }
         r++
+    }
+}
+
+function showAroundOthers(a, b, bombCounter) {
+    square(a, b).classList.add("check");
+    let r = a - 1;
+    for (let i = 0; i < 3; i++) {
+        let c = b - 1;
+        for (let j = 0; j < 3; j++) {
+            if (square(r, c) != null) {
+                if ((square(r, c).classList.contains("bomb")) && (square(r, c).classList.contains("flagged"))) {
+                    bombCounter++;
+                }
+            }
+            c++;
+        }
+        r++
+    }
+    if (bombCounter == 1 && square(a, b).classList.contains("uno")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 2 && square(a, b).classList.contains("due")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 3 && square(a, b).classList.contains("tre")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 4 && square(a, b).classList.contains("quattro")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 5 && square(a, b).classList.contains("cinque")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 6 && square(a, b).classList.contains("sei")) {
+        showAround(a, b);
+    }
+    if (bombCounter == 7 && square(a, b).classList.contains("sette")) {
+        showAround(a, b);
     }
 }
 
@@ -187,18 +264,34 @@ function popolateGrid() {
                     break;
                 case 1:
                     square(r, c).style.color = "blue";
+                    square(r, c).classList.add("uno");
                     break;
                 case 2:
                     square(r, c).style.color = "green";
+                    square(r, c).classList.add("due");
                     break;
                 case 3:
                     square(r, c).style.color = "red";
+                    square(r, c).classList.add("tre");
                     break;
                 case 4:
                     square(r, c).style.color = "violet";
+                    square(r, c).classList.add("quattro");
                     break;
                 case 5:
                     square(r, c).style.color = "purple";
+                    square(r, c).classList.add("cinque");
+                    break;
+                case 6:
+                    square(r, c).style.color = "yellow";
+                    square(r, c).classList.add("sei");
+                    break;
+                case 7:
+                    square(r, c).style.color = "orange";
+                    square(r, c).classList.add("sette");
+                    break;
+                case 8:
+                    square(r, c).style.color = "black";
             }
             if (bombsNum != 0) {
                 square(r, c).querySelector(".inner-square").classList.add("green", "number");
@@ -213,7 +306,8 @@ function popolateGrid() {
 // +++ codice +++
 
 // variabli
-let bombs, row, col, gridRows, gridCols, flags;
+let bombs, row, col, gridRows, gridCols, flags, flagBool, checked;
+const flagBtn = document.getElementById("flag");
 const squareClass = (a, b) => { // funzione per creare una classe dinamica da utilizzare per i quadrati
     a = ("0" + a).slice(-2);
     b = ("0" + b).slice(-2);
@@ -225,7 +319,7 @@ smallGrid.addEventListener("click", function() {
     document.getElementById("grid").innerHTML = "";
     gridRows = 10;
     gridCols = 10;
-    bombs = Math.floor((gridRows * gridCols) / 5);
+    bombs = Math.floor((gridRows * gridCols) / 6);
     createGame();
 })
 let mediumGrid = document.getElementById("medium");
@@ -253,7 +347,10 @@ customGrid.addEventListener("click", function() {
     createGame();
 })
 function createGame() {
+    flagBool = false;
     flags = bombs;
+    checked = 0;
+    document.getElementById("grid").classList.remove("flag-cursor");
     document.querySelector(".bombs-num").innerHTML = bombs;
     document.querySelector(".flags-num").innerHTML = flags;
     const sidebar = document.querySelector(".right");
