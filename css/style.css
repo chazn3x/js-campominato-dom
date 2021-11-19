@@ -4,6 +4,15 @@
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+}
+button {
+    padding: 15px;
+    background: rgb(15,217,119);
+    border: none;
+    margin: 4px;
+    cursor: pointer;
 }
 
 /* body */
@@ -29,18 +38,35 @@ main {
 .side-bar .options {
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+.side-bar .options button {
+    width: 150px;
+}
+.side-bar.right button {
+    color: rgb(255, 123, 0);
+    font-size: 20px;
+    opacity: 1;
+}
+.side-bar.right button.active {
+    opacity: .6;
 }
 .grid-container {
     flex: 2;
     display: flex;
     justify-content: center;
     margin: 40px;
+    position: relative;
 }
 
 /* game */
 #grid {
     background: grey;
     border: .1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+}
+#grid.flag {
+    cursor: url("../img/red-flag-16.png"), auto;
 }
 .row {
     display: flex;
@@ -61,11 +87,8 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     font-size: 15px;
     font-weight: 900;
-    user-select: none;
-    -webkit-user-select: none;
 }
 .number {
     background: rgb(15,217,119);
@@ -75,7 +98,30 @@ main {
 }
 .bomb {
     background: rgb(1,46,137);
+    color: lightgrey;
 }
-.x, .y {
+.flag {
+
+}
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
     display: none;
+    cursor: default;
+}
+.overlay .result {
+    width: 150px;
+    height: 50px;
+    background: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+.overlay.active {
+    display: flex;
 }

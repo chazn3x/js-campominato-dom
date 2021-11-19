@@ -40,12 +40,38 @@ function addBombs(num) {
 
 // aggiunta click ai quadrati
 function addClick () {
-    for (row = 1; row <= gridRows; row++) {
-        for (col = 1; col <= gridCols; col++) {
-            square(row, col).addEventListener("click", function() { // richiamo della funzione per selezionare il quadrato e aggiunta del click
-                this.classList.remove("hidden");
-                squareCheck(this);
-            });
+    let clickFunction = function() {
+        this.classList.remove("hidden");
+        squareCheck(this);
+    }
+    doClick();
+    const flagBtn = document.getElementById("flag");
+    let flagBool = false;
+    flagBtn.addEventListener("click", function() {
+        if (flagBool == false) {
+            flagBool = true;
+            flagBtn.classList.add("active");
+            document.getElementById("grid").classList.add("flag");
+            doNotClick();
+        } else {
+            flagBool = false;
+            flagBtn.classList.remove("active");
+            document.getElementById("grid").classList.remove("flag");
+            doClick();
+        }
+    });
+    function doNotClick() {
+        for (row = 1; row <= gridRows; row++) {
+            for (col = 1; col <= gridCols; col++) {
+                square(row, col).removeEventListener("click", clickFunction);
+            }
+        }
+    }
+    function doClick() {
+        for (row = 1; row <= gridRows; row++) {
+            for (col = 1; col <= gridCols; col++) {
+                square(row, col).addEventListener("click", clickFunction);
+            }
         }
     }
 }
@@ -60,10 +86,12 @@ function squareCheck(thisSquare) {
     }
     if (thisSquare.classList.contains("bomb")) {
         thisSquare.style.background = "red";
+        thisSquare.style.color = "black";
         allBombs = document.getElementsByClassName("bomb");
         for (let i = 0; i < allBombs.length; i++) {
             allBombs[i].classList.remove("hidden");
         }
+        document.querySelector(".overlay").classList.add("active");
     }
 }
 
@@ -187,6 +215,7 @@ customGrid.addEventListener("click", function() {
     createGame();
 })
 function createGame() {
+    document.querySelector(".overlay").classList.remove("active");
     createGrid(); // funzione che crea la griglia di gioco
     addBombs(bombs); // funzione per aggiungere le bombe
     popolateGrid(); // funzione per popolare la griglia
