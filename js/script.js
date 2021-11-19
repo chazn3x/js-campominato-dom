@@ -19,10 +19,10 @@ function createGrid() {
 }
 
 // aggiunta bombe
-function addBombs(num) {
+function addBombs() {
     // ciclo per numeri random univoci
     let randomArray = [];
-    while (randomArray.length < num) { // sviluppo numeri random fino al numero di bombe
+    while (randomArray.length < bombs) { // sviluppo numeri random fino al numero di bombe
         const totalSquares = gridRows * gridCols; // numero di quadrati in totale
         let randomNum = Math.floor(Math.random() * totalSquares); // numero casuale
         if (randomArray.indexOf(randomNum) == -1) { // se il numero casuale non è presente nell'array
@@ -31,32 +31,65 @@ function addBombs(num) {
     }
     // ciclo per aggiungere le bombe
     const squares = document.getElementsByClassName("square"); // selezione di tutti i quadrati
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < bombs; i++) {
         let j = randomArray[i];
         squares[j].classList.add("bomb");
-        squares[j].innerHTML += '<span><i class="fas fa-bomb"></i></span>';
+        squares[j].innerHTML += '<div class="inner-square"><i class="fas fa-bomb"></i></div>';
     }
 }
 
 // aggiunta click ai quadrati
 function addClick () {
     let clickFunction = function() {
-        this.classList.remove("hidden");
-        squareCheck(this);
+        if (!(this.classList.contains("flagged"))) {
+            this.classList.remove("hidden");
+            this.classList.add("checked");
+            squareCheck(this);
+        }
     }
+    let flagFunction = function() {
+        if (!(this.classList.contains("flagged")) && flags > 0) {
+            this.classList.add("flagged");
+            const stringClass = this.classList[2];
+            let a = parseInt(stringClass[6] + stringClass[7]);
+            let b = parseInt(stringClass[9] + stringClass[10]);
+            const flagHTML = document.createElement("div");
+            flagHTML.classList.add("flag", "flag" + a + "_" + b);
+            flagHTML.innerHTML = '<img src="/img/red-flag-16.png" alt="flag icon">';
+            this.append(flagHTML);
+            flags--;
+        } else {
+            this.classList.remove("flagged");
+            this.querySelector(".flag").remove();
+            flags++;
+        }
+        document.querySelector(".flags-num").innerHTML = flags;
+    }
+    let flagBool = false;
     doClick();
     const flagBtn = document.getElementById("flag");
-    let flagBool = false;
     flagBtn.addEventListener("click", function() {
         if (flagBool == false) {
-            flagBool = true;
-            flagBtn.classList.add("active");
-            document.getElementById("grid").classList.add("flag");
             doNotClick();
+            flagBool = true;
+            flagBtn.classList.add("clicked");
+            document.getElementById("grid").classList.add("flag-cursor");
+            for (row = 1; row <= gridRows; row++) {
+                for (col = 1; col <= gridCols; col++) {
+                    if (!(square(row, col).classList.contains("checked"))) {
+                        square(row, col).addEventListener("click", flagFunction);
+                    }
+                }
+            }
         } else {
             flagBool = false;
-            flagBtn.classList.remove("active");
-            document.getElementById("grid").classList.remove("flag");
+            flagBtn.classList.remove("clicked");
+            document.getElementById("grid").classList.remove("flag-cursor");
+            for (row = 1; row <= gridRows; row++) {
+                for (col = 1; col <= gridCols; col++) {
+                    square(row, col).removeEventListener("click", flagFunction);
+                }
+            }
             doClick();
         }
     });
@@ -79,17 +112,21 @@ function addClick () {
 // controllo quadrati
 function squareCheck(thisSquare) {
     const stringClass = thisSquare.classList[1];
+    console.log(stringClass);
     let a = parseInt(stringClass[6] + stringClass[7]);
     let b = parseInt(stringClass[9] + stringClass[10]);
     if (square(a, b).classList.contains("zero")) {
         showAround(a, b);
     }
     if (thisSquare.classList.contains("bomb")) {
-        thisSquare.style.background = "red";
-        thisSquare.style.color = "black";
+        thisSquare.querySelector(".inner-square").style.background = "red";
+        thisSquare.querySelector(".inner-square").style.color = "black";
         allBombs = document.getElementsByClassName("bomb");
         for (let i = 0; i < allBombs.length; i++) {
             allBombs[i].classList.remove("hidden");
+            if (allBombs[i].classList.contains("flagged")) {
+                allBombs[i].querySelector(".flag").remove();
+            }
         }
         document.querySelector(".overlay").classList.add("active");
     }
@@ -103,8 +140,9 @@ function showAround(a, b) {
         let c = b - 1;
         for (let j = 0; j < 3; j++) {
             if (square(r, c) != null) {
-                if (!(square(r, c).classList.contains("bomb"))) {
+                if (!(square(r, c).classList.contains("bomb")) && !(square(r, c).classList.contains("flagged"))) {
                     square(r, c).classList.remove("hidden");
+                    square(r, c).classList.add("checked");
                     if (square(r, c).classList.contains("zero") && !square(r, c).classList.contains("check")) {
                         showAround(r, c);
                     }
@@ -133,7 +171,7 @@ function popolateGrid() {
                     if (square(a, b).classList.contains("bomb")) {
                         bombsNum ++;
                         if (!(square(r, c).classList.contains("bomb"))) {
-                            square(r, c).innerHTML = bombsNum;
+                            square(r, c).innerHTML = `<div class="inner-square">${bombsNum}</div>`;
                         }
                     }
                 }
@@ -144,7 +182,7 @@ function popolateGrid() {
         if (!(square(r, c).classList.contains("bomb"))) {
             switch (bombsNum) {
                 case 0:
-                    square(r, c).style.background = "rgb(4,22,50)";
+                    square(r, c).innerHTML = '<div class="inner-square null"></div>';
                     square(r, c).classList.add("zero");
                     break;
                 case 1:
@@ -163,7 +201,7 @@ function popolateGrid() {
                     square(r, c).style.color = "purple";
             }
             if (bombsNum != 0) {
-                square(r, c).classList.add("number");
+                square(r, c).querySelector(".inner-square").classList.add("green", "number");
             }
         }
     }
@@ -175,7 +213,7 @@ function popolateGrid() {
 // +++ codice +++
 
 // variabli
-let bombs, row, col, gridRows, gridCols;
+let bombs, row, col, gridRows, gridCols, flags;
 const squareClass = (a, b) => { // funzione per creare una classe dinamica da utilizzare per i quadrati
     a = ("0" + a).slice(-2);
     b = ("0" + b).slice(-2);
@@ -215,9 +253,16 @@ customGrid.addEventListener("click", function() {
     createGame();
 })
 function createGame() {
+    flags = bombs;
+    document.querySelector(".bombs-num").innerHTML = bombs;
+    document.querySelector(".flags-num").innerHTML = flags;
+    const sidebar = document.querySelector(".right");
+    document.getElementById("flag").classList.remove("clicked");
+    sidebar.classList.add("active");
     document.querySelector(".overlay").classList.remove("active");
+    document.querySelector(".grid-container").classList.add("active");
     createGrid(); // funzione che crea la griglia di gioco
-    addBombs(bombs); // funzione per aggiungere le bombe
+    addBombs(); // funzione per aggiungere le bombe
     popolateGrid(); // funzione per popolare la griglia
     addClick(); // funzione che aggiunge il click ai quadrati
 }

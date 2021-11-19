@@ -4,15 +4,18 @@
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
 }
 button {
-    padding: 15px;
     background: rgb(15,217,119);
     border: none;
     margin: 4px;
+    height: 50px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1em;
 }
 
 /* body */
@@ -26,46 +29,71 @@ header {
     background: white;
     width: 100%;
     height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 /* main */
 main {
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
 }
 .side-bar {
     flex: 1;
+    /* display: flex; */
+    max-width: 150px;
 }
-.side-bar .options {
+.side-bar.left .options {
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: white;
+    /* margin-left: auto; */
 }
-.side-bar .options button {
-    width: 150px;
+.side-bar.left .options button {
+    /* width: 150px; */
+}
+.side-bar.right {
+    /* margin-left: 0; */
+    display: none;
+    color: white;
 }
 .side-bar.right button {
     color: rgb(255, 123, 0);
     font-size: 20px;
     opacity: 1;
+    width: 50px;
 }
-.side-bar.right button.active {
+.side-bar.right button.clicked {
     opacity: .6;
 }
+.side-bar.right.active {
+    display: block;
+}
 .grid-container {
-    flex: 2;
-    display: flex;
     justify-content: center;
-    margin: 40px;
+    align-items: center;
+    margin: 0 40px;
     position: relative;
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    height: 100%;
+}
+.grid-container.active {
+    display: flex;
 }
 
 /* game */
 #grid {
-    background: grey;
+    background: rgb(161, 161, 161);
     border: .1px solid rgba(255,255,255,0.1);
     cursor: pointer;
 }
-#grid.flag {
+#grid.flag-cursor {
     cursor: url("../img/red-flag-16.png"), auto;
 }
 .row {
@@ -74,6 +102,7 @@ main {
 }
 .col {
     border-left: .5px solid rgba(0,0,0,0.3);
+    position: relative;
 }
 .row:first-child,
 .col:first-child {
@@ -84,24 +113,59 @@ main {
     width: 25px;
     height: 25px;
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: 15px;
     font-weight: 900;
 }
 .number {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.null {
+    width: 100%;
+    height: 100%;
+    background: rgb(4,22,50);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.checked,
+.flagged {
+    cursor: default;
+}
+.flagged {
+    background: rgba(0,0,0,0.1);
+}
+.flag-cursor .flagged .flag{
+    cursor: pointer;
+}
+.green {
     background: rgb(15,217,119);
 }
-.hidden {
+.hidden .inner-square{
     opacity: 0;
 }
-.bomb {
+.bomb .inner-square {
     background: rgb(1,46,137);
     color: lightgrey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 }
 .flag {
-
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    cursor: default;
 }
 .overlay {
     position: absolute;
