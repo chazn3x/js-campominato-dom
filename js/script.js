@@ -120,7 +120,7 @@ const createFlags = function() {
         let b = parseInt(stringClass[9] + stringClass[10]);
         const flagHTML = document.createElement("div");
         flagHTML.classList.add("flag", "flag" + a + "_" + b);
-        flagHTML.innerHTML = '<img src="/img/red-flag-16.png" alt="flag icon">';
+        flagHTML.innerHTML = '<img src="img/red-flag-16.png">';
         this.append(flagHTML);
         flags--;
     } else {
