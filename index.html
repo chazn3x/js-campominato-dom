@@ -24,14 +24,49 @@
         <div class="side-bar left">
             <!-- pulsanti -->
             <div class="options">
-                <button id="small">Campo da gioco piccolo</button>
-                <button id="medium">Campo da gioco medio</button>
-                <button id="large">Campo da gioco grande</button>
-                <label for="rows">Personalizzato</label>
-                <input id="rows" type="number" placeholder="Righe">
-                <input id="cols" type="number" placeholder="Colonne">
-                <input id="bombs" type="number" placeholder="Bombe">
-                <button id="custom">Campo da gioco personalizzato</button>
+                <div class="info">
+                    <div id="small" class="info-header">
+                        Campo piccolo:
+                    </div>
+                    <div class="info-body">
+                        <div>10x10</div>
+                        <div>16 bombe</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div id="medium" class="info-header">
+                        Campo medio:
+                    </div>
+                    <div class="info-body">
+                        <div>20x20</div>
+                        <div>80 bombe</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div id="large" class="info-header">
+                        Campo grande:
+                    </div>
+                    <div class="info-body">
+                        <div>30x30</div>
+                        <div>180 bombe</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div id="custom" class="info-header">
+                        Campo personalizzato:
+                    </div>
+                    <div class="info-body">
+                        <div>
+                            <input id="rows" type="text">
+                            x
+                            <input id="cols" type="text">
+                        </div>
+                        <div>
+                            <input id="bombs" type="text">
+                            bombe
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- griglia -->
@@ -40,29 +75,31 @@
     
             </div>
             <div class="overlay">
-                <div class="result">
-                    Hai perso
+                <div class="alert">
+                    Gioca
                 </div>
             </div>
         </div>
         <!-- informazioni -->
         <div class="side-bar right">
             <button id="flag"><img src="img/red-flag-24.png" alt="flag icon"></button>
-            <div class="bombs">
-                <div class="bombs-header">
+            <!-- <div class="info bombs">
+                <div class="info-header">
                     Bombe:
                 </div>
-                <div class="bombs-num">
-
-                </div>
-            </div>
-            <div class="flags">
-                <div class="flags-header">
+                <div class="info-body bombs-num"></div>
+            </div> -->
+            <div class="info flags">
+                <div class="info-header">
                     Bandiere:
                 </div>
-                <div class="flags-num">
-                    
+                <div class="info-body flags-num"></div>
+            </div>
+            <div class="info game-duration">
+                <div class="info-header">
+                    Durata partita:
                 </div>
+                <div class="info-body time"></div>
             </div>
         </div>
     </main>

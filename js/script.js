@@ -14,7 +14,7 @@ function createGrid() {
             colHTML.append(squareHTML); // inserimento quadrato in colonna
             rowHTML.append(colHTML); // inserimento colonna in riga
         }
-        document.getElementById("grid").append(rowHTML); // inserimento riga in griglia
+        gridHTML.append(rowHTML); // inserimento riga in griglia
     }
 }
 
@@ -50,7 +50,7 @@ const flagBtnClick = function() {
         removeClickOnSquare();
         flagBool = true;
         flagBtn.classList.add("clicked");
-        document.getElementById("grid").classList.add("flag-cursor");
+        gridHTML.classList.add("flag-cursor");
         for (row = 1; row <= gridRows; row++) {
             for (col = 1; col <= gridCols; col++) {
                 if (!(square(row, col).classList.contains("checked"))) {
@@ -61,7 +61,7 @@ const flagBtnClick = function() {
     } else {
         flagBool = false;
         flagBtn.classList.remove("clicked");
-        document.getElementById("grid").classList.remove("flag-cursor");
+        gridHTML.classList.remove("flag-cursor");
         for (row = 1; row <= gridRows; row++) {
             for (col = 1; col <= gridCols; col++) {
                 square(row, col).removeEventListener("click", createFlags);
@@ -103,8 +103,8 @@ const clickOnSquare = function() {
                     allBombs[i].querySelector(".flag").remove();
                 }
             }
-            document.querySelector(".result").innerHTML = "Hai vinto!";
-            document.querySelector(".overlay").classList.add("active");
+            document.querySelector(".alert").innerHTML = "Hai vinto!";
+            overlayHTML.classList.remove("hidden");
         } else {
             squareCheck(this);
         }
@@ -137,7 +137,7 @@ function squareCheck(thisSquare) {
     let a = parseInt(stringClass[6] + stringClass[7]);
     let b = parseInt(stringClass[9] + stringClass[10]);
     if (thisSquare.classList.contains("bomb")) {
-        document.querySelector(".result").innerHTML = "Hai perso!";
+        document.querySelector(".alert").innerHTML = "Hai perso!";
         thisSquare.querySelector(".inner-square").style.background = "red";
         thisSquare.querySelector(".inner-square").style.color = "black";
         allBombs = document.getElementsByClassName("bomb");
@@ -147,7 +147,7 @@ function squareCheck(thisSquare) {
                 allBombs[i].querySelector(".flag").remove();
             }
         }
-        document.querySelector(".overlay").classList.add("active");
+        overlayHTML.classList.remove("hidden");
     } 
     if (thisSquare.classList.contains("zero")) {
         showAround(a, b);
@@ -182,8 +182,8 @@ function showAround(a, b) {
                                 allBombs[i].querySelector(".flag").remove();
                             }
                         }
-                        document.querySelector(".result").innerHTML = "Hai vinto!";
-                        document.querySelector(".overlay").classList.add("active");
+                        document.querySelector(".alert").innerHTML = "Hai vinto!";
+                        overlayHTML.classList.remove("hidden");
                     }
                 }
             }
@@ -299,6 +299,22 @@ function popolateGrid() {
         }
     }
 }
+// funione per calcolare la durata della partita
+function time(s, m) {
+    console.log(s);
+    console.log(m);
+    console.log(seconds);
+    seconds = ("00" + s).slice(-2);
+    minutes = ("00" + m).slice(-2);
+    document.querySelector('.time').innerHTML = minutes + ":" + seconds;
+    if (stop == false) {
+        setTimeout(function () {s++; time(s, m)}, 1000);
+    }
+    if (s == 59) {
+        s = -1;
+        m++;
+    }
+}
 
 
 
@@ -306,7 +322,11 @@ function popolateGrid() {
 // +++ codice +++
 
 // variabli
-let bombs, row, col, gridRows, gridCols, flags, flagBool, checked;
+let bombs, row, col, gridRows, gridCols, flags, flagBool, checked, stop;
+let seconds = '';
+let minutes = '';
+const gridHTML = document.getElementById("grid");
+const overlayHTML = document.querySelector(".overlay");
 const flagBtn = document.getElementById("flag");
 const squareClass = (a, b) => { // funzione per creare una classe dinamica da utilizzare per i quadrati
     a = ("0" + a).slice(-2);
@@ -316,7 +336,7 @@ const squareClass = (a, b) => { // funzione per creare una classe dinamica da ut
 const square = (a, b) => document.querySelector("." + squareClass(a, b)); // funzione per selezionare un quadrato con classe dinamica
 let smallGrid = document.getElementById("small");
 smallGrid.addEventListener("click", function() {
-    document.getElementById("grid").innerHTML = "";
+    gridHTML.innerHTML = "";
     gridRows = 10;
     gridCols = 10;
     bombs = Math.floor((gridRows * gridCols) / 6);
@@ -324,7 +344,7 @@ smallGrid.addEventListener("click", function() {
 })
 let mediumGrid = document.getElementById("medium");
 mediumGrid.addEventListener("click", function() {
-    document.getElementById("grid").innerHTML = "";
+    gridHTML.innerHTML = "";
     gridRows = 20;
     gridCols = 20;
     bombs = Math.floor((gridRows * gridCols) / 5);
@@ -332,7 +352,7 @@ mediumGrid.addEventListener("click", function() {
 })
 let largeGrid = document.getElementById("large");
 largeGrid.addEventListener("click", function() {
-    document.getElementById("grid").innerHTML = "";
+    gridHTML.innerHTML = "";
     gridRows = 30;
     gridCols = 30;
     bombs = Math.floor((gridRows * gridCols) / 5);
@@ -340,26 +360,37 @@ largeGrid.addEventListener("click", function() {
 })
 let customGrid = document.getElementById("custom");
 customGrid.addEventListener("click", function() {
-    document.getElementById("grid").innerHTML = "";
+    gridHTML.innerHTML = "";
     gridRows = document.getElementById("rows").value;
     gridCols = document.getElementById("cols").value;
     bombs = document.getElementById("bombs").value;
     createGame();
 })
 function createGame() {
+    stop = true;
     flagBool = false;
     flags = bombs;
     checked = 0;
-    document.getElementById("grid").classList.remove("flag-cursor");
-    document.querySelector(".bombs-num").innerHTML = bombs;
+    gridHTML.classList.remove("flag-cursor");
+    // document.querySelector(".bombs-num").innerHTML = bombs;
     document.querySelector(".flags-num").innerHTML = flags;
     const sidebar = document.querySelector(".right");
     document.getElementById("flag").classList.remove("clicked");
     sidebar.classList.add("active");
-    document.querySelector(".overlay").classList.remove("active");
+    overlayHTML.classList.remove("active");
     document.querySelector(".grid-container").classList.add("active");
+    document.querySelector('.time').innerHTML = "00:00";
     createGrid(); // funzione che crea la griglia di gioco
     addBombs(); // funzione per aggiungere le bombe
     popolateGrid(); // funzione per popolare la griglia
     addClick(); // funzione che aggiunge il click ai quadrati
+    document.querySelector(".alert").innerHTML = "Gioca";
+    overlayHTML.classList.remove("hidden");
+    document.querySelector(".alert").addEventListener("click", function () {
+        overlayHTML.classList.add("hidden");
+        let s = 0;
+        let m = 0;
+        stop = false;
+        time(s, m);
+    });
 }
