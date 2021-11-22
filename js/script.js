@@ -105,6 +105,7 @@ const clickOnSquare = function() {
             }
             document.querySelector(".alert").innerHTML = "Hai vinto!";
             overlayHTML.classList.remove("hidden");
+            document.querySelector(".alert").removeEventListener("click", alertClick);
         } else {
             squareCheck(this);
         }
@@ -138,6 +139,7 @@ function squareCheck(thisSquare) {
     let b = parseInt(stringClass[9] + stringClass[10]);
     if (thisSquare.classList.contains("bomb")) {
         document.querySelector(".alert").innerHTML = "Hai perso!";
+        document.querySelector(".alert").removeEventListener("click", alertClick);
         thisSquare.querySelector(".inner-square").style.background = "red";
         thisSquare.querySelector(".inner-square").style.color = "black";
         allBombs = document.getElementsByClassName("bomb");
@@ -184,6 +186,7 @@ function showAround(a, b) {
                         }
                         document.querySelector(".alert").innerHTML = "Hai vinto!";
                         overlayHTML.classList.remove("hidden");
+                        document.querySelector(".alert").removeEventListener("click", alertClick);
                     }
                 }
             }
@@ -366,6 +369,13 @@ customGrid.addEventListener("click", function() {
     bombs = document.getElementById("bombs").value;
     createGame();
 })
+const alertClick = function () {
+    overlayHTML.classList.add("hidden");
+    let s = 0;
+    let m = 0;
+    stop = false;
+    time(s, m);
+}
 function createGame() {
     stop = true;
     flagBool = false;
@@ -386,11 +396,5 @@ function createGame() {
     addClick(); // funzione che aggiunge il click ai quadrati
     document.querySelector(".alert").innerHTML = "Gioca";
     overlayHTML.classList.remove("hidden");
-    document.querySelector(".alert").addEventListener("click", function () {
-        overlayHTML.classList.add("hidden");
-        let s = 0;
-        let m = 0;
-        stop = false;
-        time(s, m);
-    });
+    document.querySelector(".alert").addEventListener("click", alertClick);
 }
