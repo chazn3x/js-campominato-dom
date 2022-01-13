@@ -325,7 +325,7 @@ function time(s, m) {
 // +++ codice +++
 
 // variabli
-let bombs, row, col, gridRows, gridCols, flags, flagBool, checked, stop;
+let bombs, row, col, gridRows, gridCols, flags, flagBool, checked, stop, s, m;
 let seconds = '';
 let minutes = '';
 const gridHTML = document.getElementById("grid");
@@ -340,25 +340,25 @@ const square = (a, b) => document.querySelector("." + squareClass(a, b)); // fun
 let smallGrid = document.getElementById("small");
 smallGrid.addEventListener("click", function() {
     gridHTML.innerHTML = "";
-    gridRows = 10;
-    gridCols = 10;
-    bombs = Math.floor((gridRows * gridCols) / 6);
+    gridRows = 9;
+    gridCols = 9;
+    bombs = 10;
     createGame();
 })
 let mediumGrid = document.getElementById("medium");
 mediumGrid.addEventListener("click", function() {
     gridHTML.innerHTML = "";
-    gridRows = 20;
-    gridCols = 20;
-    bombs = Math.floor((gridRows * gridCols) / 5);
+    gridRows = 16;
+    gridCols = 16;
+    bombs = 40;
     createGame();
 })
 let largeGrid = document.getElementById("large");
 largeGrid.addEventListener("click", function() {
     gridHTML.innerHTML = "";
     gridRows = 30;
-    gridCols = 30;
-    bombs = Math.floor((gridRows * gridCols) / 5);
+    gridCols = 16;
+    bombs = 99;
     createGame();
 })
 let customGrid = document.getElementById("custom");
@@ -371,8 +371,8 @@ customGrid.addEventListener("click", function() {
 })
 const alertClick = function () {
     overlayHTML.classList.add("hidden");
-    let s = 0;
-    let m = 0;
+    s = 0;
+    m = 0;
     stop = false;
     time(s, m);
 }
